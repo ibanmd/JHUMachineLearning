@@ -64,9 +64,9 @@ test <- test[,-colIsBadFactor]
 ## table(train$new_window)
 ## table(train$num_window[1:500])
 
-## Remove columns 2 and 3
-train <- train[,-c(2,3)]
-test <- test[,-c(2,3)]
+## Remove columns 1 through 3
+train <- train[,-c(1:3)]
+test <- test[,-c(1:3)]
 
 rm(quickcheck)
 rm(colClass)
@@ -76,5 +76,5 @@ rm(i)
 rm(numOfBlanks)
 rm(numOfNAs)
 
-write.csv(train, "traincleaned.csv", row.names=FALSE)
-write.csv(test, "testcleaned.csv", row.names=FALSE)
+save(train, file="traincleaned.Rda")
+save(test, file="testcleaned.Rda")

@@ -1,13 +1,69 @@
 # JHU Machine Learning, August 2014
 ## Course Project
 
-##
+### Cleaning the data and loading it
 
-```{r}
+Prior to the analysis, some variables in the dataset were removed due to them primarily consisting of either NA values or blanks.  This cleaning is summarized in a different file called MLCourseProjectCleaning, and can be viewed here: [MLCourseProjectCleaning](http://htmlpreview.github.io/?https://github.com/ibanmd/JHUMachineLearning/blob/master/MLcourseProjectCleaning.html)  I refer my grader to a different file because I wanted to document the cleaning thoroughly, and also leave the full 5 page maximum for this main analysis.  To summarize the cleaning, the dataset was reduced to 52 predictor variables, and all integer variables were converted to numeric variables.    
+
+The training data is available [here](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv) and the test data is available [here](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv).  The cleaning script will look for the file names pml-training.csv and pml-testing.csv in the working directory, and then place their cleaned versions in the same working directory as .Rda files.  In this analysis, the seed will be set to 1234 and we will be using the caret package.  
+
+```{r include=FALSE}
+## caret package
+library(caret)
+## set seed
+set.seed(1234)
+
 ## Read in the pre-cleaned data
 ## Data was cleaned by MLcourseProjectCleaning.R
-train <- read.csv("traincleaned.csv", header=TRUE)
-test <- read.csv("testcleaned.csv", header=TRUE)
+load("traincleaned.Rda")
+load("testcleaned.Rda")
+```
+
+### Splitting the training data
+
+The first step in building a prediction model will be to split the training data into two pieces.  The first piece will be strictly for training, and the second piece will be for cross validation.  We will build a few different prediction models and compare their performance on the cross validation set.
+
+
+```{r}
+## Partition the training data into (strictly) training and cross validation
+inTrain <- createDataPartition(train$classe, p=.75, list=FALSE)
+training <- train[inTrain,]
+crossval <- train[-inTrain,]
+## Remove the original training dataframe so we do not get confused later
+rm(train)
+```
+
+### Building a few different prediction models
+
+Next, we will build three different prediction models and compare them to each other on the cross validation dataset.  Which ever model performs best will then be used to predict on the test set.  The three that will be made will be a random forest model, ###########
+
+#### Random forest
+
+The first model created will be a random forest.  The model will use 52 predictor variables to explain the "classe" variable.
+
+```{r}
+modelRF <- train(classe ~ . , data=training, method="rf", prox=TRUE)
+```
+
+```{r}
+
+```
+
+#### Trees
+#### Random forests
+
+```{r}
+
+```
+
+### Cleaning the data
+
+```{r}
+
+```
+
+```{r}
+
 ```
 
 ```{r}

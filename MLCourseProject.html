@@ -56,13 +56,10 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h1>JHU Machine Learning, August 2014</h1>
 <div id="course-project" class="section level2">
 <h2>Course Project</h2>
+<div id="cleaning-the-data" class="section level3">
+<h3>Cleaning the data</h3>
+<p>Prior to the analysis, some variables in the dataset were removed due to them being primarily consisting of either NA values or blanks. This cleaning is summarized in a different file called MLCourseProjectCleaning, and can be viewed here: <a href="http://htmlpreview.github.io/?https://github.com/ibanmd/JHUMachineLearning/blob/master/MLcourseProjectCleaning.html">MLCourseProjectCleaning</a> The dataset was reduced to 53 predictor variables, and all integer variables were converted to numeric variables.</p>
 </div>
-<div id="section" class="section level2">
-<h2></h2>
-<pre class="r"><code>## Read in the pre-cleaned data
-## Data was cleaned by MLcourseProjectCleaning.R
-train &lt;- read.csv(&quot;traincleaned.csv&quot;, header=TRUE)
-test &lt;- read.csv(&quot;testcleaned.csv&quot;, header=TRUE)</code></pre>
 </div>
 </div>
 

@@ -1,0 +1,15 @@
+# JHU Machine Learning, August 2014
+## Course Project
+
+##
+
+```{r}
+## Read in the pre-cleaned data
+## Data was cleaned by MLcourseProjectCleaning.R
+train <- read.csv("traincleaned.csv", header=TRUE)
+test <- read.csv("testcleaned.csv", header=TRUE)
+```
+
+```{r}
+
+```

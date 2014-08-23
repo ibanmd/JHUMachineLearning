@@ -241,7 +241,23 @@ colIsBadFactor &lt;- grep(&quot;factor&quot;,colClass)[3:35]
 ## Subsetting out the &quot;factor&quot; columns that are full of blanks
 train &lt;- train[,-colIsBadFactor]
 test &lt;- test[,-colIsBadFactor]</code></pre>
-<p>Now we are down to 56 columns, and one of those is the variable we will be predicting, so really it is one less than that.</p>
+<p>Now we are down to 56 columns, and one of those is the variable we will be predicting, so really it is one less than that. Next, a quick look at the second and third columns that remain.</p>
+<pre class="r"><code>## Names of the second and third column
+names(train[,2:3])</code></pre>
+<pre><code>## [1] &quot;new_window&quot; &quot;num_window&quot;</code></pre>
+<pre class="r"><code>## What's in these columns
+table(train$new_window)</code></pre>
+<pre><code>## 
+##    no   yes 
+## 19216   406</code></pre>
+<pre class="r"><code>table(train$num_window[1:500])</code></pre>
+<pre><code>## 
+## 11 12 13 14 15 16 17 18 46 47 48 49 50 51 52 53 54 55 56 57 58 59 
+##  3 21 28 24 24 29 17 19 17 28 31 18 35 20 15 32 18 22 24 38 13 24</code></pre>
+<p>These columns can be removed too.</p>
+<pre class="r"><code>train &lt;- train[,-c(2,3)]
+test &lt;- test[,-c(2,3)]</code></pre>
+<p>We are down to 54 columns and we can now begin the acutal analysis.</p>
 </div>
 </div>
 

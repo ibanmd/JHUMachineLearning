@@ -96,14 +96,34 @@ train <- train[,-colIsBadFactor]
 test <- test[,-colIsBadFactor]
 ```
 
-Now we are down to `r dim(train)[2]` columns, and one of those is the variable we will be predicting, so really it is one less than that.  Aside from the 2nd column, `r names(train)[2]`, which I am not sure what it signifies, the rest of our data looks clean, complete, and ready to be fed into some learning algorithms.
+Now we are down to `r dim(train)[2]` columns, and one of those is the variable we will be predicting, so really it is one less than that.  Next, a quick look at the second and third columns that remain.
 
 
 ```{r}
+## Names of the second and third column
+names(train[,2:3])
 
+## What's in these columns
+table(train$new_window)
+table(train$num_window[1:500])
 ```
 
+These columns can be removed too.
 
+```{r}
+train <- train[,-c(2,3)]
+test <- test[,-c(2,3)]
+```
 
+We are down to `r dim(train)[2]` columns and we can now begin the acutal analysis.
 
-
+```{r echo=FALSE, include=FALSE}
+## Remove unneeded data
+rm(quickcheck)
+rm(colClass)
+rm(colIsBadFactor)
+rm(colIsInt)
+rm(i)
+rm(numOfBlanks)
+rm(numOfNAs)
+```

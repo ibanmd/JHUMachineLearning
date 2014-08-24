@@ -29,43 +29,97 @@ The first step in building a prediction model will be to split the training data
 inTrain <- createDataPartition(train$classe, p=.75, list=FALSE)
 training <- train[inTrain,]
 crossval <- train[-inTrain,]
-## Remove the original training dataframe so we do not get confused later
+## Remove the original training dataframe so we do not get confused later, an inTrain while we're at it
 rm(train)
+rm(inTrain)
 ```
 
-### Building a few different prediction models
+### Building a couple of prediction models
 
-Next, we will build three different prediction models and compare them to each other on the cross validation dataset.  Which ever model performs best will then be used to predict on the test set.  The three that will be made will be a random forest model, ###########
-
-#### Random forest
-
-The first model created will be a random forest.  The model will use 52 predictor variables to explain the "classe" variable.
+The first step will be to process our training data down to a smaller set of variables.  This will help algorithms like random forest to run more quickly.  Let's see how many components we need in order to capture 95% of the variance in our dataset.
 
 ```{r}
-modelRF <- train(classe ~ . , data=training, method="rf", prox=TRUE)
+preProcess(training[,-53], method="pca", thresh=.95)
 ```
 
-```{r}
+Since 95% is a good target to shoot for, we will go ahead and specify that 25 components be used.  This preprocessing will be need to be done on the training, cross validation, and testing datasets.
 
+```{r}
+## Perform PCA on the training, cross validation, and test datasets
+preProc <- preProcess(training[,-53], method="pca", pcaComp=25)
+trainingPC <- predict(preProc, training[,-53])
+crossvalPC <- predict(preProc, crossval[,-53])
+testPC <- predict(preProc, test[,-53])
+rm(preProc)
 ```
 
-#### Trees
-#### Random forests
+Next, let's build a random forest and also a neural network on the training data.  The random forest was chosen as a model due to its reputation for accuracy.  I also chose a neural network out of curiosity to see how it compared to the random forest and because it was the only other model that I have experience with that was suited for this classification job.
 
 ```{r}
+## Random forest, with some extra parameters passed to help with the speed
+modelRF <- train(x=trainingPC, y=training$classe, method="rf", trControl = trainControl(method = "cv", number = 4, allowParallel = TRUE, verboseIter = FALSE))
 
-```
-
-### Cleaning the data
-
-```{r}
-
-```
-
-```{r}
+## Neural network
+modelNN <- train(x=trainingPC, y=training$classe, method="nnet")
 
 ```
 
-```{r}
+Let's have a look at how accurate our models are in the training set:
 
+```{r}
+modelRF
+modelNN
+```
+
+It appears we have a clear winner with the random forest.  However, accuracy in the training set is not a sure indicator for accuracy outside of it.  Before we move on to testing on the cross validation set, let's have a look at a plot and see if we see anything interesting:
+
+```{r}
+plot(trainingPC[,2] ~ trainingPC[,1], 
+     type="p", 
+     col=training$classe,
+     xlab="Principal Component 1",
+     ylab="Principal Component 2",
+     main= "Plot of two Principal Components, colored by Classe")
+```
+
+In this plot it is easy to see the 5 distinct groupings.  It is reassuring to see their separation here, and presumably the other principal components are creating separation in other dimensions.  Next let's take a look at how the models stack up against each other on the cross validation set in terms of prediction power.  I predict that the random forest will outperform the neural network, though it is so far not possible to predict exactly how well they will do.
+
+### Testing the models on the cross validation set
+
+So here is how the two models performed:
+
+```{r}
+## Prints the results of the model predictions
+confusionMatrix(predict(modelRF, crossvalPC), crossval$classe)
+confusionMatrix(predict(modelNN, crossvalPC), crossval$classe)
+```
+
+Lucky for us, the random forest had an outstanding performance on the cross validation set!  The neural network did not perform terribly well however, so we will discard that model for now.  Here is a simple visual representation of how the random forest performed.  In fact there is almost very little to even see due to the fact that the predictions were so accurate.
+
+```{r}
+## Simple plot to aid in visualization of the prediction results
+plot(predict(modelRF, crossvalPC), crossval$classe, 
+     col=c("red","blue","green","grey","orange"),
+     xlab="Predicted Classe",
+     ylab="True Classe",
+     main="Plot of True Class by Predicted Classe")
+```
+
+Notice the very solid consistent colors in each bar.  This represents that the vast majority of the predictions were correct.  We can see quickly that classe E was the easiest class to predict, while the other bars have thin slices of other colors present.  You can see that some A predictions were actually B, some B predictions were actually C, and some C predictions were actually D.
+
+### Conclusion
+
+It appears that this type of physical activity lends itself well to classification by a machine learning algorithm.  We were able to very accurately predict movements using a random forest, and it is very fair to say that since it achieved an accuracy rate of over 97% on a cross validation set of almost 5000 observations, that that level of prediction accuracy should carry over to any new observations given to it.
+
+#### Epilogue 
+
+On the submission portion of the assignment, I scored 19/20 on the first pass.  The one that I missed I was able to guess what the correct answer was based on the colorful plot of True vs Predicted.  My prediction was A, and since that was incorrect, I knew the next best guess was Blue, or in other words, B.  19/20 is a somewhat expected in fact.  The chance of getting 19 right under the 97.88% accuracy rate we saw on the cross validation set is 28.2%, so not at all unexpected.
+
+```{r}
+## Plot of binomial distribution for questions to get right out of 20
+plot(0:20, dbinom(0:20, size=20, prob=.9788), 
+     type="h", lwd=15, xlab="Number of questions answered correctly",
+     ylab="Chance of that occuring",
+     main="Binomial density plot for answers correct out of 20",
+     sub="Probability of success is .9788")
 ```

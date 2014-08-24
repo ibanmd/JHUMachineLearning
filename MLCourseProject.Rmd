@@ -55,13 +55,12 @@ rm(preProc)
 
 Next, let's build a random forest and also a neural network on the training data.  The random forest was chosen as a model due to its reputation for accuracy.  I also chose a neural network out of curiosity to see how it compared to the random forest and because it was the only other model that I have experience with that was suited for this classification job.
 
-```{r}
+```{r comment=NA, message=FALSE, warning=FALSE, results='hide'}
 ## Random forest, with some extra parameters passed to help with the speed
 modelRF <- train(x=trainingPC, y=training$classe, method="rf", trControl = trainControl(method = "cv", number = 4, allowParallel = TRUE, verboseIter = FALSE))
 
 ## Neural network
 modelNN <- train(x=trainingPC, y=training$classe, method="nnet")
-
 ```
 
 Let's have a look at how accurate our models are in the training set:
